@@ -39,7 +39,33 @@ function _triangleVolume (vertexHolder) {
   // 
 	return Number(1.0/6.0)*(-v321 + v231 + v312 - v132 - v213 + v123);
 }
+function _center (vertexes) {
+  if (vertexes.length === 0) return [0,0,0]
+  
+  var minx = Infinity,  maxx = -Infinity,  miny = Infinity,  maxy = -Infinity,  minz = Infinity,  maxz = -Infinity;
+  var tminx = Infinity, tmaxx = -Infinity, tminy = Infinity, tmaxy = -Infinity, tminz = Infinity, tmaxz = -Infinity;
 
+  vertexes.forEach(function(vertexHolder) {
+    tminx = Math.min(vertexHolder.vert1.v1, vertexHolder.vert2.v1, vertexHolder.vert3.v1)
+    minx  = tminx < minx ? tminx : minx
+    tmaxx = Math.max(vertexHolder.vert1.v1, vertexHolder.vert2.v1, vertexHolder.vert3.v1)
+    maxx  = tmaxx > maxx ? tmaxx : maxx
+
+
+    tminy = Math.min(vertexHolder.vert1.v2, vertexHolder.vert2.v2, vertexHolder.vert3.v2)
+    miny  = tminy < miny ? tminy : miny
+    tmaxy = Math.max(vertexHolder.vert1.v2, vertexHolder.vert2.v2, vertexHolder.vert3.v2)
+    maxy  = tmaxy > maxy ? tmaxy : maxy
+
+
+    tminz = Math.min(vertexHolder.vert1.v3, vertexHolder.vert2.v3, vertexHolder.vert3.v3)
+    minz  = tminz < minz ? tminz : minz
+    tmaxz = Math.max(vertexHolder.vert1.v3, vertexHolder.vert2.v3, vertexHolder.vert3.v3)
+    maxz  = tmaxz > maxz ? tmaxz : maxz
+  });
+
+  return [(maxx + minx) / 2, (maxy - miny) / 2, (maxz - minz) / 2];
+}
 function _boundingBox (vertexes) {
   if (vertexes.length === 0) return [0,0,0]
   
@@ -94,6 +120,7 @@ function _parseSTLString (stl) {
 		volume: volumeTotal, 		    // cubic cm
 		weight: volumeTotal * 1.04,	// gm
     boundingBox: _boundingBox(verteces),
+    center: _center(verteces),
 	}
 }
 
@@ -132,6 +159,7 @@ function _parseSTLBinary (buf) {
 		volume: volumeTotal,		    // cubic cm
 		weight: volumeTotal * 1.04,	// gm
     boundingBox: _boundingBox(verteces),
+    center: _center(verteces),
 	}
 }
 
